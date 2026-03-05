@@ -2,7 +2,7 @@
 # 1 entry per source. The `id` is reference in notes.yaml.
 # `id`, `title`, and `author` required — others added as needed.
 
-- id: thomson-orkney
+- id: omond-1911
   title: "Orkney 80 Years Ago (With Special Reference to Evie)"
   author: "James Omond"
   type: book
