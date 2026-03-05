@@ -235,7 +235,7 @@
 
       NOTES = jsyaml.load(await notesRes.text()) || [];
       NOTES.forEach(n => {
-        n.tags = Array.isArray(n.tags) ? n.tags.map(t => String(t).toLowerCase()) : [];
+        n.tags = Array.isArray(n.tags) ? n.tags.map(t => String(t)) : [];
       });
 
       buildTagDropdown();
@@ -251,11 +251,11 @@
   function buildTagDropdown() {
     const counts = {};
     NOTES.forEach(n => n.tags.forEach(t => counts[t] = (counts[t] || 0) + 1));
-    const sorted = Object.keys(counts).sort((a, b) => a.localeCompare(b));
+    const sorted = Object.keys(counts).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
     const sel = document.getElementById('tag-select');
     sorted.forEach(tag => {
       const opt = document.createElement('option');
-      opt.value = tag;
+      opt.value = tag.toLowerCase();
       opt.textContent = `${tag} (${counts[tag]})`;
       sel.appendChild(opt);
     });
@@ -312,13 +312,13 @@
     const q = searchQuery.toLowerCase().trim();
     return NOTES.filter(n => {
       const src = SOURCES[n.source] || {};
-      if (activeTags.size > 0 && ![...activeTags].every(t => n.tags.includes(t))) return false;
+      if (activeTags.size > 0 && ![...activeTags].every(t => n.tags.map(t2 => t2.toLowerCase()).includes(t.toLowerCase()))) return false;
       if (!q) return true;
       return (
         (n.notes  || '').toLowerCase().includes(q) ||
         (src.title  || '').toLowerCase().includes(q) ||
         (src.author || '').toLowerCase().includes(q) ||
-        n.tags.some(t => t.includes(q))
+        n.tags.some(t => t.toLowerCase().includes(q))
       );
     });
   }
