@@ -148,6 +148,7 @@
     .card-page { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: var(--muted); }
 
     .card-notes { font-size: 1rem; line-height: 1.7; color: #2a3238; }
+    .card-notes p + p { margin-top: 0.8rem; }
     .card-notes mark { background: #f5e07a; border-radius: 1px; padding: 0 1px; }
 
     .card-footer {
@@ -367,7 +368,7 @@
           ${n.page ? `<span class="card-page">p. ${esc(n.page)}</span>` : ''}
         </div>
         ${urlHtml}
-        <p class="card-notes">${hi(n.notes || '', q)}</p>
+        <div class="card-notes">${hi(n.notes || '', q).split('\n\n').map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('')}</div>
         <div class="card-footer">
           <div class="card-tags">${tagsHtml}</div>
           <a class="card-anchor" href="#${esc(n.id)}" title="Direct link">#${esc(n.id)}</a>
