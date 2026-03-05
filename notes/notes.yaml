@@ -3,7 +3,7 @@
 # `id` can be any unique string — used for direct hash links.
 # `page` is optional.
 
-- id: 0001
+- id: n0001
   source: omond-1911
   page: 8
   tags: [fairies, Evie, Sanday]
