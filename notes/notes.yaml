@@ -1,0 +1,13 @@
+# notes.yaml
+# `source` must match an `id` in sources.yaml.
+# `id` can be any unique string — used for direct hash links.
+# `page` is optional.
+
+- id: 0001
+  source: omond-1911
+  page: 8
+  tags: [fairies, Evie, Sanday]
+  notes: |
+    "This was a great fairy place. The fairies came down from the Warts along Rummerdale, and the walk was called the Fairy Gate. The Knowe of Stenso, Knowe of Howanny Granna, and the old houses of Dyke below Feolquoy, at the road, were also noted for fairies and various adventures were had with these uncanny folk at Hammer Hill and Costa Hill. These were the days of ale-drinking, and it was usually on the return from a bout of dissipation that the fairies were seen.
+
+    Certain people were pointed out as having danced with the fairies, and only escaped from being carried away by drawing a circle round themselves with steel or iron, through which the fairies dare not pass. A common story was the hearing of strange weird music, which, likely enough, might be the strains of the fiddle still ringing in a muddled head. In Sanday the people beuld or shut up the fairies in a lee place and so got rid of them for a while."
