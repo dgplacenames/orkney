@@ -144,8 +144,11 @@
       flex-wrap: wrap; padding-bottom: 0.6rem; border-bottom: 1px solid var(--sand);
     }
     .source-title { font-size: 0.85rem; font-weight: 600; color: var(--sea); }
+    .source-btn { background: none; border: none; padding: 0; cursor: pointer; font-family: inherit; text-align: left; }
+    .source-btn:hover { text-decoration: underline; text-underline-offset: 2px; }
+    .source-chip { background: var(--rust); }
     .source-author { font-size: 0.82rem; font-style: italic; color: var(--muted); }
-    .card-page { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: var(--muted); }
+    .card-page { font-size: 0.82rem; font-style: italic; color: var(--muted); }
 
     .card-notes { font-size: 1rem; line-height: 1.7; color: #2a3238; }
     .card-notes p + p { margin-top: 0.8rem; }
@@ -219,6 +222,8 @@
   let SOURCES = {};
   let NOTES = [];
   let activeTags = new Set();
+  let activeAuthor = null;
+  let activeTitle = null;
   let searchQuery = '';
 
   // ── Load data ─────────────────────────────────────────────────────────────
@@ -239,7 +244,7 @@
         n.tags = Array.isArray(n.tags) ? n.tags.map(t => String(t)) : [];
       });
 
-      buildTagDropdown();
+      buildTagDropdown(NOTES);
       render();
     } catch (e) {
       const el = document.getElementById('error');
@@ -249,17 +254,22 @@
   }
 
   // ── Tag dropdown ──────────────────────────────────────────────────────────
-  function buildTagDropdown() {
+  function buildTagDropdown(visibleNotes) {
     const counts = {};
-    NOTES.forEach(n => n.tags.forEach(t => counts[t] = (counts[t] || 0) + 1));
+    visibleNotes.forEach(n => n.tags.forEach(t => counts[t] = (counts[t] || 0) + 1));
     const sorted = Object.keys(counts).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
     const sel = document.getElementById('tag-select');
+    // Preserve placeholder text
+    const placeholder = sel.options[0].textContent;
+    while (sel.options.length > 1) sel.remove(1);
     sorted.forEach(tag => {
+      if (activeTags.has(tag.toLowerCase())) return; // don't list already-active tags
       const opt = document.createElement('option');
       opt.value = tag.toLowerCase();
       opt.textContent = `${tag} (${counts[tag]})`;
       sel.appendChild(opt);
     });
+    sel.options[0].textContent = placeholder;
   }
 
   function addTag(tag) {
@@ -275,9 +285,40 @@
     render();
   }
 
+  function setAuthorFilter(value) {
+    activeAuthor = activeAuthor === value ? null : value;
+    // Clear title filter if it's no longer consistent with the new author
+    if (activeAuthor && activeTitle) {
+      const match = Object.values(SOURCES).find(s => s.title === activeTitle);
+      if (!match || match.author !== activeAuthor) activeTitle = null;
+    }
+    renderChips();
+    render();
+  }
+
+  function setTitleFilter(value) {
+    activeTitle = activeTitle === value ? null : value;
+    renderChips();
+    render();
+  }
+
   function renderChips() {
     const container = document.getElementById('active-tags');
     container.innerHTML = '';
+    if (activeAuthor) {
+      const chip = document.createElement('span');
+      chip.className = 'active-chip source-chip';
+      chip.innerHTML = `${activeAuthor} <button aria-label="Remove author filter">×</button>`;
+      chip.querySelector('button').addEventListener('click', () => { activeAuthor = null; renderChips(); render(); });
+      container.appendChild(chip);
+    }
+    if (activeTitle) {
+      const chip = document.createElement('span');
+      chip.className = 'active-chip source-chip';
+      chip.innerHTML = `${activeTitle} <button aria-label="Remove title filter">×</button>`;
+      chip.querySelector('button').addEventListener('click', () => { activeTitle = null; renderChips(); render(); });
+      container.appendChild(chip);
+    }
     activeTags.forEach(tag => {
       const chip = document.createElement('span');
       chip.className = 'active-chip';
@@ -287,13 +328,15 @@
     });
     const sel = document.getElementById('tag-select');
     sel.value = '';
-    sel.options[0].textContent = activeTags.size > 0 ? 'Add another filter…' : 'Filter by tag…';
+    sel.options[0].textContent = activeTags.size > 0 ? 'Add another tag…' : 'Filter by tag…';
   }
 
   document.getElementById('tag-select').addEventListener('change', e => addTag(e.target.value));
 
   document.getElementById('clear-btn').addEventListener('click', () => {
     activeTags.clear();
+    activeAuthor = null;
+    activeTitle = null;
     searchQuery = '';
     document.getElementById('search').value = '';
     const sel = document.getElementById('tag-select');
@@ -314,6 +357,8 @@
     return NOTES.filter(n => {
       const src = SOURCES[n.source] || {};
       if (activeTags.size > 0 && ![...activeTags].every(t => n.tags.map(t2 => t2.toLowerCase()).includes(t.toLowerCase()))) return false;
+      if (activeAuthor && (src.author || '').toLowerCase() !== activeAuthor.toLowerCase()) return false;
+      if (activeTitle && (src.title || '').toLowerCase() !== activeTitle.toLowerCase()) return false;
       if (!q) return true;
       return (
         (n.notes  || '').toLowerCase().includes(q) ||
@@ -345,6 +390,7 @@
     const results = filtered();
 
     document.getElementById('count').textContent = `${results.length} of ${NOTES.length} notes`;
+    buildTagDropdown(results);
     list.innerHTML = '';
     empty.style.display = results.length === 0 ? 'block' : 'none';
 
@@ -363,8 +409,8 @@
 
       card.innerHTML = `
         <div class="card-source">
-          <span class="source-title">${hi(src.title || n.source, q)}</span>
-          <span class="source-author">${hi(src.author || '', q)}</span>
+          <button class="source-title source-btn" data-field="title" data-value="${esc(src.title || n.source)}">${hi(src.title || n.source, q)}</button>
+          ${src.author ? `<button class="source-btn source-author" data-field="author" data-value="${esc(src.author)}">${hi(src.author, q)}</button>` : ''}
           ${n.page ? `<span class="card-page">p. ${esc(n.page)}</span>` : ''}
         </div>
         ${urlHtml}
@@ -379,6 +425,13 @@
         btn.addEventListener('click', () => {
           const tag = btn.dataset.tag;
           activeTags.has(tag) ? removeTag(tag) : addTag(tag);
+        })
+      );
+
+      card.querySelectorAll('.source-btn').forEach(btn =>
+        btn.addEventListener('click', () => {
+          if (btn.dataset.field === 'author') setAuthorFilter(btn.dataset.value);
+          else setTitleFilter(btn.dataset.value);
         })
       );
 
