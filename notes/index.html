@@ -150,6 +150,27 @@
     .source-author { font-size: 0.82rem; font-style: italic; color: var(--muted); }
     .card-page { font-size: 0.82rem; color: var(--muted); }
 
+    /* One-off inline citation — not clickable, slightly different styling */
+    .citation-inline {
+      font-size: 0.83rem;
+      font-style: italic;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+    .citation-page {
+      font-size: 0.82rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    /* Optional note title */
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--slate);
+      line-height: 1.35;
+    }
+
     .card-notes { font-size: 1rem; line-height: 1.7; color: #2a3238; }
     .card-notes p + p { margin-top: 0.8rem; }
     .card-notes mark { background: #f5e07a; border-radius: 1px; padding: 0 1px; }
@@ -259,11 +280,10 @@
     visibleNotes.forEach(n => n.tags.forEach(t => counts[t] = (counts[t] || 0) + 1));
     const sorted = Object.keys(counts).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
     const sel = document.getElementById('tag-select');
-    // Preserve placeholder text
     const placeholder = sel.options[0].textContent;
     while (sel.options.length > 1) sel.remove(1);
     sorted.forEach(tag => {
-      if (activeTags.has(tag.toLowerCase())) return; // don't list already-active tags
+      if (activeTags.has(tag.toLowerCase())) return;
       const opt = document.createElement('option');
       opt.value = tag.toLowerCase();
       opt.textContent = `${tag} (${counts[tag]})`;
@@ -287,7 +307,6 @@
 
   function setAuthorFilter(value) {
     activeAuthor = activeAuthor === value ? null : value;
-    // Clear title filter if it's no longer consistent with the new author
     if (activeAuthor && activeTitle) {
       const match = Object.values(SOURCES).find(s => s.title === activeTitle);
       if (!match || match.author !== activeAuthor) activeTitle = null;
@@ -355,15 +374,17 @@
   function filtered() {
     const q = searchQuery.toLowerCase().trim();
     return NOTES.filter(n => {
-      const src = SOURCES[n.source] || {};
+      const src = n.source ? (SOURCES[n.source] || {}) : {};
       if (activeTags.size > 0 && ![...activeTags].every(t => n.tags.map(t2 => t2.toLowerCase()).includes(t.toLowerCase()))) return false;
       if (activeAuthor && (src.author || '').toLowerCase() !== activeAuthor.toLowerCase()) return false;
       if (activeTitle && (src.title || '').toLowerCase() !== activeTitle.toLowerCase()) return false;
       if (!q) return true;
       return (
-        (n.notes  || '').toLowerCase().includes(q) ||
-        (src.title  || '').toLowerCase().includes(q) ||
-        (src.author || '').toLowerCase().includes(q) ||
+        (n.notes      || '').toLowerCase().includes(q) ||
+        (n.title      || '').toLowerCase().includes(q) ||
+        (n.citation   || '').toLowerCase().includes(q) ||
+        (src.title    || '').toLowerCase().includes(q) ||
+        (src.author   || '').toLowerCase().includes(q) ||
         n.tags.some(t => t.toLowerCase().includes(q))
       );
     });
@@ -383,6 +404,33 @@
     return safe.replace(re, '<mark>$1</mark>');
   }
 
+  function buildSourceHtml(n, q) {
+    // Case 1: source ID — look up from SOURCES, clickable filter buttons
+    if (n.source) {
+      const src = SOURCES[n.source] || {};
+      const titleText = src.title || n.source;
+      return `
+        <div class="card-source">
+          <button class="source-title source-btn" data-field="title" data-value="${esc(titleText)}">${hi(titleText, q)}</button>
+          ${src.author ? `<button class="source-btn source-author" data-field="author" data-value="${esc(src.author)}">${hi(src.author, q)}</button>` : ''}
+          ${n.page ? `<span class="card-page">p. ${esc(n.page)}</span>` : ''}
+        </div>
+        ${src.url ? `<div class="card-url"><a href="${esc(src.url)}" target="_blank" rel="noopener">${esc(src.url)}</a></div>` : ''}
+      `;
+    }
+    // Case 2: inline one-off citation — plain text, not filterable
+    if (n.citation) {
+      return `
+        <div class="card-source">
+          <span class="citation-inline">${hi(n.citation, q)}</span>
+          ${n.page ? `<span class="citation-page">p. ${esc(n.page)}</span>` : ''}
+        </div>
+      `;
+    }
+    // Case 3: no source info at all — omit the source row entirely
+    return '';
+  }
+
   function render() {
     const list  = document.getElementById('notes-list');
     const empty = document.getElementById('empty');
@@ -395,25 +443,19 @@
     empty.style.display = results.length === 0 ? 'block' : 'none';
 
     results.forEach(n => {
-      const src  = SOURCES[n.source] || {};
       const card = document.createElement('article');
       card.className = 'note-card';
       card.id = n.id;
+
+      const sourceHtml = buildSourceHtml(n, q);
 
       const tagsHtml = n.tags.map(t =>
         `<button class="card-tag${activeTags.has(t) ? ' active' : ''}" data-tag="${esc(t)}">${esc(t)}</button>`
       ).join('');
 
-      const urlHtml = src.url
-        ? `<div class="card-url"><a href="${esc(src.url)}" target="_blank" rel="noopener">${esc(src.url)}</a></div>` : '';
-
       card.innerHTML = `
-        <div class="card-source">
-          <button class="source-title source-btn" data-field="title" data-value="${esc(src.title || n.source)}">${hi(src.title || n.source, q)}</button>
-          ${src.author ? `<button class="source-btn source-author" data-field="author" data-value="${esc(src.author)}">${hi(src.author, q)}</button>` : ''}
-          ${n.page ? `<span class="card-page">p. ${esc(n.page)}</span>` : ''}
-        </div>
-        ${urlHtml}
+        ${sourceHtml}
+        ${n.title ? `<h2 class="card-title">${hi(n.title, q)}</h2>` : ''}
         <div class="card-notes">${hi(n.notes || '', q).split('\n\n').map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('')}</div>
         <div class="card-footer">
           <div class="card-tags">${tagsHtml}</div>
@@ -428,6 +470,7 @@
         })
       );
 
+      // Only source-lookup cards have filter buttons
       card.querySelectorAll('.source-btn').forEach(btn =>
         btn.addEventListener('click', () => {
           if (btn.dataset.field === 'author') setAuthorFilter(btn.dataset.value);
