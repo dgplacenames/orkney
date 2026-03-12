@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,19 +10,25 @@
     @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
     :root {
-      --stone:   #f0ebe2;
-      --sand:    #e2d9cc;
-      --slate:   #3d4a52;
-      --sea:     #2e5068;
-      --ink:     #1e2428;
-      --muted:   #7a8a92;
-      --rust:    #8b4a2e;
-      --tag-bg:  #d8e4eb;
+      --stone: #f0ebe2;
+      --sand: #e2d9cc;
+      --slate: #3d4a52;
+      --sea: #2e5068;
+      --ink: #1e2428;
+      --muted: #7a8a92;
+      --rust: #8b4a2e;
+      --tag-bg: #d8e4eb;
       --card-bg: #faf8f4;
-      --border:  #cdc5b8;
+      --border: #cdc5b8;
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
       font-family: 'Crimson Pro', Georgia, serif;
@@ -37,8 +44,18 @@
       padding: 1.4rem 2rem;
       margin-bottom: 2rem;
     }
-    header h1 { font-size: 2.2rem; font-weight: 300; letter-spacing: 0.04em; color: white; }
-    header h1 em { font-style: italic; color: #a8bfc9; }
+
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      color: white;
+    }
+
+    header h1 em {
+      font-style: italic;
+      color: #a8bfc9;
+    }
 
     #controls {
       max-width: 720px;
@@ -49,7 +66,11 @@
       gap: 0.7rem;
     }
 
-    .control-row { display: flex; gap: 0.8rem; align-items: center; }
+    .control-row {
+      display: flex;
+      gap: 0.8rem;
+      align-items: center;
+    }
 
     #search {
       font-family: 'IBM Plex Mono', monospace;
@@ -63,8 +84,14 @@
       outline: none;
       transition: border-color 0.15s;
     }
-    #search:focus { border-color: var(--sea); }
-    #search::placeholder { color: var(--muted); }
+
+    #search:focus {
+      border-color: var(--sea);
+    }
+
+    #search::placeholder {
+      color: var(--muted);
+    }
 
     #tag-select {
       font-family: 'IBM Plex Mono', monospace;
@@ -78,10 +105,21 @@
       outline: none;
       transition: border-color 0.15s;
     }
-    #tag-select:focus { border-color: var(--sea); }
 
-    #active-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; min-height: 0; }
-    #active-tags:empty { display: none; }
+    #tag-select:focus {
+      border-color: var(--sea);
+    }
+
+    #active-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      min-height: 0;
+    }
+
+    #active-tags:empty {
+      display: none;
+    }
 
     .active-chip {
       font-family: 'IBM Plex Mono', monospace;
@@ -94,11 +132,21 @@
       align-items: center;
       gap: 0.35rem;
     }
+
     .active-chip button {
-      background: none; border: none; color: white;
-      cursor: pointer; font-size: 0.9rem; line-height: 1; opacity: 0.65; padding: 0;
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 0.9rem;
+      line-height: 1;
+      opacity: 0.65;
+      padding: 0;
     }
-    .active-chip button:hover { opacity: 1; }
+
+    .active-chip button:hover {
+      opacity: 1;
+    }
 
     #meta-bar {
       max-width: 720px;
@@ -108,13 +156,27 @@
       justify-content: space-between;
       align-items: center;
     }
-    #count { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--muted); }
-    #clear-btn {
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
-      background: none; border: none; color: var(--muted);
-      cursor: pointer; text-decoration: underline; text-underline-offset: 2px;
+
+    #count {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
     }
-    #clear-btn:hover { color: var(--rust); }
+
+    #clear-btn {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    #clear-btn:hover {
+      color: var(--rust);
+    }
 
     #notes-list {
       max-width: 720px;
@@ -136,20 +198,66 @@
       transition: box-shadow 0.15s, border-color 0.15s;
       scroll-margin-top: 5rem;
     }
-    .note-card:hover { box-shadow: 0 3px 16px rgba(46,80,104,0.10); border-color: #b0c0ca; }
-    .note-card:target { border-color: var(--sea); box-shadow: 0 0 0 3px rgba(46,80,104,0.15); }
+
+    .note-card:hover {
+      box-shadow: 0 3px 16px rgba(46, 80, 104, 0.10);
+      border-color: #b0c0ca;
+    }
+
+    .note-card:target {
+      border-color: var(--sea);
+      box-shadow: 0 0 0 3px rgba(46, 80, 104, 0.15);
+    }
 
     .card-source {
-      display: flex; align-items: baseline; gap: 0.5rem;
-      flex-wrap: wrap; padding-bottom: 0.6rem; border-bottom: 1px solid var(--sand);
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid var(--sand);
     }
-    .source-title { font-size: 0.85rem; font-weight: 600; color: var(--sea); }
-    .source-btn { background: none; border: none; padding: 0; cursor: pointer; font-family: inherit; text-align: left; }
-    .source-btn:hover { text-decoration: underline; text-underline-offset: 2px; }
-    .source-chip { background: var(--rust); }
-    .source-author { font-size: 0.82rem; font-style: italic; color: var(--muted); }
-    .author-sep { font-size: 0.82rem; color: var(--muted); font-style: normal; }
-    .card-page { font-size: 0.82rem; color: var(--muted); }
+
+    .source-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--sea);
+    }
+
+    .source-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+    }
+
+    .source-btn:hover {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .source-chip {
+      background: var(--rust);
+    }
+
+    .source-author {
+      font-size: 0.82rem;
+      font-style: italic;
+      color: var(--muted);
+    }
+
+    .author-sep {
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-style: normal;
+    }
+
+    .card-page {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
 
     /* One-off inline citation — not clickable */
     .citation-inline {
@@ -158,6 +266,7 @@
       color: var(--muted);
       line-height: 1.4;
     }
+
     .citation-page {
       font-size: 0.82rem;
       color: var(--muted);
@@ -172,259 +281,345 @@
       line-height: 1.35;
     }
 
-    .card-notes { font-size: 1rem; line-height: 1.7; color: #2a3238; }
-    .card-notes p + p { margin-top: 0.8rem; }
-    .card-notes mark { background: #f5e07a; border-radius: 1px; padding: 0 1px; }
+    .card-notes {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: #2a3238;
+    }
+
+    .card-notes p+p {
+      margin-top: 0.8rem;
+    }
+
+    .card-notes mark {
+      background: #f5e07a;
+      border-radius: 1px;
+      padding: 0 1px;
+    }
 
     .card-footer {
-      display: flex; align-items: flex-end;
-      justify-content: space-between; gap: 0.5rem; margin-top: 0.2rem;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-top: 0.2rem;
     }
-    .card-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+    }
+
     .card-tag {
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.67rem;
-      padding: 0.15rem 0.45rem; background: var(--tag-bg); color: var(--slate);
-      border-radius: 2px; border: none; cursor: pointer; transition: background 0.1s, color 0.1s;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.67rem;
+      padding: 0.15rem 0.45rem;
+      background: var(--tag-bg);
+      color: var(--slate);
+      border-radius: 2px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.1s, color 0.1s;
     }
-    .card-tag:hover { background: var(--sea); color: white; }
-    .card-tag.active { background: var(--sea); color: white; }
+
+    .card-tag:hover {
+      background: var(--sea);
+      color: white;
+    }
+
+    .card-tag.active {
+      background: var(--sea);
+      color: white;
+    }
 
     .card-anchor {
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
-      color: var(--muted); text-decoration: none; opacity: 0.5;
-      transition: opacity 0.12s; white-space: nowrap; flex-shrink: 0;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--muted);
+      text-decoration: none;
+      opacity: 0.5;
+      transition: opacity 0.12s;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
-    .card-anchor:hover { opacity: 1; color: var(--sea); }
+
+    .card-anchor:hover {
+      opacity: 1;
+      color: var(--sea);
+    }
 
     .card-url a {
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem;
-      color: var(--sea); word-break: break-all;
-      text-decoration: underline; text-underline-offset: 2px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--sea);
+      word-break: break-all;
+      text-decoration: underline;
+      text-underline-offset: 2px;
     }
 
-    #empty { max-width: 720px; margin: 3rem auto; padding: 0 1.5rem; font-style: italic; color: var(--muted); display: none; }
-    #error { max-width: 720px; margin: 2rem auto; padding: 1rem 1.5rem; background: #fdf0ee; border-left: 3px solid var(--rust); font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem; display: none; }
+    #empty {
+      max-width: 720px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+      font-style: italic;
+      color: var(--muted);
+      display: none;
+    }
+
+    #error {
+      max-width: 720px;
+      margin: 2rem auto;
+      padding: 1rem 1.5rem;
+      background: #fdf0ee;
+      border-left: 3px solid var(--rust);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.82rem;
+      display: none;
+    }
 
     @media (max-width: 540px) {
-      .control-row { flex-direction: column; align-items: stretch; }
-      #tag-select { width: 100%; }
-      header h1 { font-size: 1.7rem; }
-      #notes-list, #controls, #meta-bar { padding: 0 1rem; }
-      .card-footer { flex-direction: column; align-items: flex-start; }
-      .card-anchor { align-self: flex-end; }
+      .control-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      #tag-select {
+        width: 100%;
+      }
+
+      header h1 {
+        font-size: 1.7rem;
+      }
+
+      #notes-list,
+      #controls,
+      #meta-bar {
+        padding: 0 1rem;
+      }
+
+      .card-footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .card-anchor {
+        align-self: flex-end;
+      }
     }
   </style>
 </head>
+
 <body>
 
-<header>
-  <h1>Orkney <em>Notes</em></h1>
-</header>
+  <header>
+    <h1>Orkney <em>Notes</em></h1>
+  </header>
 
-<div id="controls">
-  <div class="control-row">
-    <input id="search" type="search" placeholder="Search notes, sources, authors…" autocomplete="off">
-    <select id="tag-select">
-      <option value="">Filter by tag…</option>
-    </select>
+  <div id="controls">
+    <div class="control-row">
+      <input id="search" type="search" placeholder="Search notes, sources, authors…" autocomplete="off">
+      <select id="tag-select">
+        <option value="">Filter by tag…</option>
+      </select>
+    </div>
+    <div id="active-tags"></div>
   </div>
-  <div id="active-tags"></div>
-</div>
 
-<div id="meta-bar">
-  <span id="count"></span>
-  <button id="clear-btn">clear filters</button>
-</div>
+  <div id="meta-bar">
+    <span id="count"></span>
+    <button id="clear-btn">clear filters</button>
+  </div>
 
-<div id="error"></div>
-<div id="notes-list"></div>
-<div id="empty">No notes match.</div>
+  <div id="error"></div>
+  <div id="notes-list"></div>
+  <div id="empty">No notes match.</div>
 
-<script>
-  let SOURCES = {};
-  let NOTES = [];
-  let activeTags = new Set();
-  let activeAuthor = null;
-  let activeTitle = null;
-  let searchQuery = '';
+  <script>
+    let SOURCES = {};
+    let NOTES = [];
+    let activeTags = new Set();
+    let activeAuthor = null;
+    let activeTitle = null;
+    let searchQuery = '';
 
-  // Normalise author field to always be an array
-  function toAuthors(raw) {
-    if (!raw) return [];
-    return Array.isArray(raw) ? raw.map(String) : [String(raw)];
-  }
-
-  // ── Load data ─────────────────────────────────────────────────────────────
-  async function loadData() {
-    try {
-      const [srcRes, notesRes] = await Promise.all([
-        fetch('sources.yaml'),
-        fetch('notes.yaml')
-      ]);
-      if (!srcRes.ok) throw new Error(`Could not load sources.yaml (${srcRes.status})`);
-      if (!notesRes.ok) throw new Error(`Could not load notes.yaml (${notesRes.status})`);
-
-      const srcList = jsyaml.load(await srcRes.text()) || [];
-      srcList.forEach(s => { s.authors = toAuthors(s.author); });
-      SOURCES = Object.fromEntries(srcList.map(s => [s.id, s]));
-
-      NOTES = jsyaml.load(await notesRes.text()) || [];
-      NOTES.forEach(n => {
-        n.tags = Array.isArray(n.tags) ? n.tags.map(t => String(t)) : [];
-      });
-
-      buildTagDropdown(NOTES);
-      render();
-    } catch (e) {
-      const el = document.getElementById('error');
-      el.style.display = 'block';
-      el.textContent = `Error: ${e.message}`;
+    // Normalise author field to always be an array
+    function toAuthors(raw) {
+      if (!raw) return [];
+      return Array.isArray(raw) ? raw.map(String) : [String(raw)];
     }
-  }
 
-  // ── Tag dropdown ──────────────────────────────────────────────────────────
-  function buildTagDropdown(visibleNotes) {
-    const counts = {};
-    visibleNotes.forEach(n => n.tags.forEach(t => counts[t] = (counts[t] || 0) + 1));
-    const sorted = Object.keys(counts).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
-    const sel = document.getElementById('tag-select');
-    const placeholder = sel.options[0].textContent;
-    while (sel.options.length > 1) sel.remove(1);
-    sorted.forEach(tag => {
-      if (activeTags.has(tag.toLowerCase())) return;
-      const opt = document.createElement('option');
-      opt.value = tag.toLowerCase();
-      opt.textContent = `${tag} (${counts[tag]})`;
-      sel.appendChild(opt);
-    });
-    sel.options[0].textContent = placeholder;
-  }
+    // ── Load data ─────────────────────────────────────────────────────────────
+    async function loadData() {
+      try {
+        const [srcRes, notesRes] = await Promise.all([
+          fetch('sources.yaml'),
+          fetch('notes.yaml')
+        ]);
+        if (!srcRes.ok) throw new Error(`Could not load sources.yaml (${srcRes.status})`);
+        if (!notesRes.ok) throw new Error(`Could not load notes.yaml (${notesRes.status})`);
 
-  function addTag(tag) {
-    if (!tag || activeTags.has(tag)) return;
-    activeTags.add(tag);
-    renderChips();
-    render();
-  }
+        const srcList = jsyaml.load(await srcRes.text()) || [];
+        srcList.forEach(s => { s.authors = toAuthors(s.author); });
+        SOURCES = Object.fromEntries(srcList.map(s => [s.id, s]));
 
-  function removeTag(tag) {
-    activeTags.delete(tag);
-    renderChips();
-    render();
-  }
+        NOTES = jsyaml.load(await notesRes.text()) || [];
+        NOTES.forEach(n => {
+          n.tags = Array.isArray(n.tags) ? n.tags.map(t => String(t)) : [];
+        });
 
-  function setAuthorFilter(value) {
-    activeAuthor = activeAuthor === value ? null : value;
-    if (activeAuthor && activeTitle) {
-      const match = Object.values(SOURCES).find(s => s.title === activeTitle);
-      if (!match || !match.authors.some(a => a.toLowerCase() === activeAuthor.toLowerCase())) {
-        activeTitle = null;
+        buildTagDropdown(NOTES);
+        render();
+      } catch (e) {
+        const el = document.getElementById('error');
+        el.style.display = 'block';
+        el.textContent = `Error: ${e.message}`;
       }
     }
-    renderChips();
-    render();
-  }
 
-  function setTitleFilter(value) {
-    activeTitle = activeTitle === value ? null : value;
-    renderChips();
-    render();
-  }
-
-  function renderChips() {
-    const container = document.getElementById('active-tags');
-    container.innerHTML = '';
-    if (activeAuthor) {
-      const chip = document.createElement('span');
-      chip.className = 'active-chip source-chip';
-      chip.innerHTML = `${esc(activeAuthor)} <button aria-label="Remove author filter">×</button>`;
-      chip.querySelector('button').addEventListener('click', () => { activeAuthor = null; renderChips(); render(); });
-      container.appendChild(chip);
+    // ── Tag dropdown ──────────────────────────────────────────────────────────
+    function buildTagDropdown(visibleNotes) {
+      const counts = {};
+      visibleNotes.forEach(n => n.tags.forEach(t => counts[t] = (counts[t] || 0) + 1));
+      const sorted = Object.keys(counts).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+      const sel = document.getElementById('tag-select');
+      const placeholder = sel.options[0].textContent;
+      while (sel.options.length > 1) sel.remove(1);
+      sorted.forEach(tag => {
+        if (activeTags.has(tag.toLowerCase())) return;
+        const opt = document.createElement('option');
+        opt.value = tag.toLowerCase();
+        opt.textContent = `${tag} (${counts[tag]})`;
+        sel.appendChild(opt);
+      });
+      sel.options[0].textContent = placeholder;
     }
-    if (activeTitle) {
-      const chip = document.createElement('span');
-      chip.className = 'active-chip source-chip';
-      chip.innerHTML = `${esc(activeTitle)} <button aria-label="Remove title filter">×</button>`;
-      chip.querySelector('button').addEventListener('click', () => { activeTitle = null; renderChips(); render(); });
-      container.appendChild(chip);
+
+    function addTag(tag) {
+      if (!tag || activeTags.has(tag)) return;
+      activeTags.add(tag);
+      renderChips();
+      render();
     }
-    activeTags.forEach(tag => {
-      const chip = document.createElement('span');
-      chip.className = 'active-chip';
-      chip.innerHTML = `${esc(tag)} <button aria-label="Remove ${esc(tag)}">×</button>`;
-      chip.querySelector('button').addEventListener('click', () => removeTag(tag));
-      container.appendChild(chip);
+
+    function removeTag(tag) {
+      activeTags.delete(tag);
+      renderChips();
+      render();
+    }
+
+    function setAuthorFilter(value) {
+      activeAuthor = activeAuthor === value ? null : value;
+      if (activeAuthor && activeTitle) {
+        const match = Object.values(SOURCES).find(s => s.title === activeTitle);
+        if (!match || !match.authors.some(a => a.toLowerCase() === activeAuthor.toLowerCase())) {
+          activeTitle = null;
+        }
+      }
+      renderChips();
+      render();
+    }
+
+    function setTitleFilter(value) {
+      activeTitle = activeTitle === value ? null : value;
+      renderChips();
+      render();
+    }
+
+    function renderChips() {
+      const container = document.getElementById('active-tags');
+      container.innerHTML = '';
+      if (activeAuthor) {
+        const chip = document.createElement('span');
+        chip.className = 'active-chip source-chip';
+        chip.innerHTML = `${esc(activeAuthor)} <button aria-label="Remove author filter">×</button>`;
+        chip.querySelector('button').addEventListener('click', () => { activeAuthor = null; renderChips(); render(); });
+        container.appendChild(chip);
+      }
+      if (activeTitle) {
+        const chip = document.createElement('span');
+        chip.className = 'active-chip source-chip';
+        chip.innerHTML = `${esc(activeTitle)} <button aria-label="Remove title filter">×</button>`;
+        chip.querySelector('button').addEventListener('click', () => { activeTitle = null; renderChips(); render(); });
+        container.appendChild(chip);
+      }
+      activeTags.forEach(tag => {
+        const chip = document.createElement('span');
+        chip.className = 'active-chip';
+        chip.innerHTML = `${esc(tag)} <button aria-label="Remove ${esc(tag)}">×</button>`;
+        chip.querySelector('button').addEventListener('click', () => removeTag(tag));
+        container.appendChild(chip);
+      });
+      const sel = document.getElementById('tag-select');
+      sel.value = '';
+      sel.options[0].textContent = activeTags.size > 0 ? 'Add another tag…' : 'Filter by tag…';
+    }
+
+    document.getElementById('tag-select').addEventListener('change', e => addTag(e.target.value));
+
+    document.getElementById('clear-btn').addEventListener('click', () => {
+      activeTags.clear();
+      activeAuthor = null;
+      activeTitle = null;
+      searchQuery = '';
+      document.getElementById('search').value = '';
+      const sel = document.getElementById('tag-select');
+      sel.value = '';
+      sel.options[0].textContent = 'Filter by tag…';
+      renderChips();
+      render();
     });
-    const sel = document.getElementById('tag-select');
-    sel.value = '';
-    sel.options[0].textContent = activeTags.size > 0 ? 'Add another tag…' : 'Filter by tag…';
-  }
 
-  document.getElementById('tag-select').addEventListener('change', e => addTag(e.target.value));
-
-  document.getElementById('clear-btn').addEventListener('click', () => {
-    activeTags.clear();
-    activeAuthor = null;
-    activeTitle = null;
-    searchQuery = '';
-    document.getElementById('search').value = '';
-    const sel = document.getElementById('tag-select');
-    sel.value = '';
-    sel.options[0].textContent = 'Filter by tag…';
-    renderChips();
-    render();
-  });
-
-  document.getElementById('search').addEventListener('input', e => {
-    searchQuery = e.target.value;
-    render();
-  });
-
-  // ── Filter ────────────────────────────────────────────────────────────────
-  function filtered() {
-    const q = searchQuery.toLowerCase().trim();
-    return NOTES.filter(n => {
-      const src = n.source ? (SOURCES[n.source] || {}) : {};
-      const authors = src.authors || [];
-      if (activeTags.size > 0 && ![...activeTags].every(t => n.tags.map(t2 => t2.toLowerCase()).includes(t.toLowerCase()))) return false;
-      if (activeAuthor && !authors.some(a => a.toLowerCase() === activeAuthor.toLowerCase())) return false;
-      if (activeTitle && (src.title || '').toLowerCase() !== activeTitle.toLowerCase()) return false;
-      if (!q) return true;
-      return (
-        (n.notes    || '').toLowerCase().includes(q) ||
-        (n.title    || '').toLowerCase().includes(q) ||
-        (n.citation || '').toLowerCase().includes(q) ||
-        (src.title  || '').toLowerCase().includes(q) ||
-        authors.some(a => a.toLowerCase().includes(q)) ||
-        n.tags.some(t => t.toLowerCase().includes(q))
-      );
+    document.getElementById('search').addEventListener('input', e => {
+      searchQuery = e.target.value;
+      render();
     });
-  }
 
-  // ── Render helpers ────────────────────────────────────────────────────────
-  function esc(s) {
-    return String(s ?? '')
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  }
+    // ── Filter ────────────────────────────────────────────────────────────────
+    function filtered() {
+      const q = searchQuery.toLowerCase().trim();
+      return NOTES.filter(n => {
+        const src = n.source ? (SOURCES[n.source] || {}) : {};
+        const authors = src.authors || [];
+        if (activeTags.size > 0 && ![...activeTags].every(t => n.tags.map(t2 => t2.toLowerCase()).includes(t.toLowerCase()))) return false;
+        if (activeAuthor && !authors.some(a => a.toLowerCase() === activeAuthor.toLowerCase())) return false;
+        if (activeTitle && (src.title || '').toLowerCase() !== activeTitle.toLowerCase()) return false;
+        if (!q) return true;
+        return (
+          (n.notes || '').toLowerCase().includes(q) ||
+          (n.title || '').toLowerCase().includes(q) ||
+          (n.citation || '').toLowerCase().includes(q) ||
+          (src.title || '').toLowerCase().includes(q) ||
+          authors.some(a => a.toLowerCase().includes(q)) ||
+          n.tags.some(t => t.toLowerCase().includes(q))
+        );
+      });
+    }
 
-  function hi(text, q) {
-    if (!q) return esc(text);
-    const safe = esc(text);
-    const re = new RegExp(`(${esc(q).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-    return safe.replace(re, '<mark>$1</mark>');
-  }
+    // ── Render helpers ────────────────────────────────────────────────────────
+    function esc(s) {
+      return String(s ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
 
-  function buildSourceHtml(n, q) {
-    // Case 1: source ID — look up from SOURCES, clickable filter buttons
-    if (n.source) {
-      const src = SOURCES[n.source] || {};
-      const titleText = src.title || n.source;
-      const authors = src.authors || [];
-      const authorsHtml = authors.map((a, i) =>
-        `${i > 0 ? '<span class="author-sep">,</span> ' : ''}<button class="source-btn source-author" data-field="author" data-value="${esc(a)}">${hi(a, q)}</button>`
-      ).join('');
-      return `
+    function hi(text, q) {
+      if (!q) return esc(text);
+      const safe = esc(text);
+      const re = new RegExp(`(${esc(q).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+      return safe.replace(re, '<mark>$1</mark>');
+    }
+
+    function buildSourceHtml(n, q) {
+      // Case 1: source ID — look up from SOURCES, clickable filter buttons
+      if (n.source) {
+        const src = SOURCES[n.source] || {};
+        const titleText = src.title || n.source;
+        const authors = src.authors || [];
+        const authorsHtml = authors.map((a, i) =>
+          `${i > 0 ? '<span class="author-sep">, </span>' : ''}<button class="source-btn source-author" data-field="author" data-value="${esc(a)}">${hi(a, q)}</button>`
+        ).join('');
+        return `
         <div class="card-source">
           <button class="source-title source-btn" data-field="title" data-value="${esc(titleText)}">${hi(titleText, q)}</button>
           ${authorsHtml}
@@ -432,44 +627,44 @@
         </div>
         ${src.url ? `<div class="card-url"><a href="${esc(src.url)}" target="_blank" rel="noopener">${esc(src.url)}</a></div>` : ''}
       `;
-    }
-    // Case 2: inline one-off citation — plain text, not filterable
-    if (n.citation) {
-      return `
+      }
+      // Case 2: inline one-off citation — plain text, not filterable
+      if (n.citation) {
+        return `
         <div class="card-source">
           <span class="citation-inline">${hi(n.citation, q)}</span>
           ${n.page ? `<span class="citation-page">p. ${esc(String(n.page))}</span>` : ''}
         </div>
       `;
+      }
+      // Case 3: no source info — omit row entirely
+      return '';
     }
-    // Case 3: no source info — omit row entirely
-    return '';
-  }
 
-  // ── Render ────────────────────────────────────────────────────────────────
-  function render() {
-    const list  = document.getElementById('notes-list');
-    const empty = document.getElementById('empty');
-    const q = searchQuery.toLowerCase().trim();
-    const results = filtered();
+    // ── Render ────────────────────────────────────────────────────────────────
+    function render() {
+      const list = document.getElementById('notes-list');
+      const empty = document.getElementById('empty');
+      const q = searchQuery.toLowerCase().trim();
+      const results = filtered();
 
-    document.getElementById('count').textContent = `${results.length} of ${NOTES.length} notes`;
-    buildTagDropdown(results);
-    list.innerHTML = '';
-    empty.style.display = results.length === 0 ? 'block' : 'none';
+      document.getElementById('count').textContent = `${results.length} of ${NOTES.length} notes`;
+      buildTagDropdown(results);
+      list.innerHTML = '';
+      empty.style.display = results.length === 0 ? 'block' : 'none';
 
-    results.forEach(n => {
-      const card = document.createElement('article');
-      card.className = 'note-card';
-      card.id = n.id;
+      results.forEach(n => {
+        const card = document.createElement('article');
+        card.className = 'note-card';
+        card.id = n.id;
 
-      const sourceHtml = buildSourceHtml(n, q);
+        const sourceHtml = buildSourceHtml(n, q);
 
-      const tagsHtml = n.tags.map(t =>
-        `<button class="card-tag${activeTags.has(t) ? ' active' : ''}" data-tag="${esc(t)}">${esc(t)}</button>`
-      ).join('');
+        const tagsHtml = n.tags.map(t =>
+          `<button class="card-tag${activeTags.has(t) ? ' active' : ''}" data-tag="${esc(t)}">${esc(t)}</button>`
+        ).join('');
 
-      card.innerHTML = `
+        card.innerHTML = `
         ${sourceHtml}
         ${n.title ? `<h2 class="card-title">${hi(n.title, q)}</h2>` : ''}
         <div class="card-notes">${hi(n.notes || '', q).split('\n\n').map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('')}</div>
@@ -479,35 +674,36 @@
         </div>
       `;
 
-      card.querySelectorAll('.card-tag').forEach(btn =>
-        btn.addEventListener('click', () => {
-          const tag = btn.dataset.tag;
-          activeTags.has(tag) ? removeTag(tag) : addTag(tag);
-        })
-      );
+        card.querySelectorAll('.card-tag').forEach(btn =>
+          btn.addEventListener('click', () => {
+            const tag = btn.dataset.tag;
+            activeTags.has(tag) ? removeTag(tag) : addTag(tag);
+          })
+        );
 
-      card.querySelectorAll('.source-btn').forEach(btn =>
-        btn.addEventListener('click', () => {
-          if (btn.dataset.field === 'author') setAuthorFilter(btn.dataset.value);
-          else setTitleFilter(btn.dataset.value);
-        })
-      );
+        card.querySelectorAll('.source-btn').forEach(btn =>
+          btn.addEventListener('click', () => {
+            if (btn.dataset.field === 'author') setAuthorFilter(btn.dataset.value);
+            else setTitleFilter(btn.dataset.value);
+          })
+        );
 
-      list.appendChild(card);
-    });
+        list.appendChild(card);
+      });
 
-    if (location.hash) {
+      if (location.hash) {
+        const el = document.querySelector(location.hash);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    window.addEventListener('hashchange', () => {
       const el = document.querySelector(location.hash);
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  }
+    });
 
-  window.addEventListener('hashchange', () => {
-    const el = document.querySelector(location.hash);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  });
-
-  loadData();
-</script>
+    loadData();
+  </script>
 </body>
+
 </html>
