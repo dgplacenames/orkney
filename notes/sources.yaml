@@ -7,3 +7,14 @@
   author: "James Omond"
   type: book
   year: 1911
+
+- id: graffiti-pamphlet
+  title: "Graffiti, carvings and inscriptions in St Magnus Cathedral"
+  author: ["Antonia Thomas", "Fran Hollinrake"]
+  type: pamphlet
+  year: 1911
+
+- id: cathedral-guide-2007
+  title: "St Magnus Cathedral"
+  type: book
+  year: 2007

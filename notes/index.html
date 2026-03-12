@@ -148,9 +148,10 @@
     .source-btn:hover { text-decoration: underline; text-underline-offset: 2px; }
     .source-chip { background: var(--rust); }
     .source-author { font-size: 0.82rem; font-style: italic; color: var(--muted); }
+    .source-author + .source-author::before { content: ', '; font-style: normal; color: var(--muted); margin-left: -0.3rem; }
     .card-page { font-size: 0.82rem; color: var(--muted); }
 
-    /* One-off inline citation — not clickable, slightly different styling */
+    /* One-off inline citation — not clickable */
     .citation-inline {
       font-size: 0.83rem;
       font-style: italic;
@@ -247,6 +248,12 @@
   let activeTitle = null;
   let searchQuery = '';
 
+  // Normalise author field to always be an array
+  function toAuthors(raw) {
+    if (!raw) return [];
+    return Array.isArray(raw) ? raw.map(String) : [String(raw)];
+  }
+
   // ── Load data ─────────────────────────────────────────────────────────────
   async function loadData() {
     try {
@@ -258,6 +265,8 @@
       if (!notesRes.ok) throw new Error(`Could not load notes.yaml (${notesRes.status})`);
 
       const srcList = jsyaml.load(await srcRes.text()) || [];
+      // Normalise authors to arrays on load
+      srcList.forEach(s => { s.authors = toAuthors(s.author); });
       SOURCES = Object.fromEntries(srcList.map(s => [s.id, s]));
 
       NOTES = jsyaml.load(await notesRes.text()) || [];
@@ -307,9 +316,12 @@
 
   function setAuthorFilter(value) {
     activeAuthor = activeAuthor === value ? null : value;
+    // Clear title filter if inconsistent with new author
     if (activeAuthor && activeTitle) {
       const match = Object.values(SOURCES).find(s => s.title === activeTitle);
-      if (!match || match.author !== activeAuthor) activeTitle = null;
+      if (!match || !match.authors.some(a => a.toLowerCase() === activeAuthor.toLowerCase())) {
+        activeTitle = null;
+      }
     }
     renderChips();
     render();
@@ -327,21 +339,21 @@
     if (activeAuthor) {
       const chip = document.createElement('span');
       chip.className = 'active-chip source-chip';
-      chip.innerHTML = `${activeAuthor} <button aria-label="Remove author filter">×</button>`;
+      chip.innerHTML = `${esc(activeAuthor)} <button aria-label="Remove author filter">×</button>`;
       chip.querySelector('button').addEventListener('click', () => { activeAuthor = null; renderChips(); render(); });
       container.appendChild(chip);
     }
     if (activeTitle) {
       const chip = document.createElement('span');
       chip.className = 'active-chip source-chip';
-      chip.innerHTML = `${activeTitle} <button aria-label="Remove title filter">×</button>`;
+      chip.innerHTML = `${esc(activeTitle)} <button aria-label="Remove title filter">×</button>`;
       chip.querySelector('button').addEventListener('click', () => { activeTitle = null; renderChips(); render(); });
       container.appendChild(chip);
     }
     activeTags.forEach(tag => {
       const chip = document.createElement('span');
       chip.className = 'active-chip';
-      chip.innerHTML = `${tag} <button aria-label="Remove ${tag}">×</button>`;
+      chip.innerHTML = `${esc(tag)} <button aria-label="Remove ${esc(tag)}">×</button>`;
       chip.querySelector('button').addEventListener('click', () => removeTag(tag));
       container.appendChild(chip);
     });
@@ -375,22 +387,23 @@
     const q = searchQuery.toLowerCase().trim();
     return NOTES.filter(n => {
       const src = n.source ? (SOURCES[n.source] || {}) : {};
+      const authors = src.authors || [];
       if (activeTags.size > 0 && ![...activeTags].every(t => n.tags.map(t2 => t2.toLowerCase()).includes(t.toLowerCase()))) return false;
-      if (activeAuthor && (src.author || '').toLowerCase() !== activeAuthor.toLowerCase()) return false;
+      if (activeAuthor && !authors.some(a => a.toLowerCase() === activeAuthor.toLowerCase())) return false;
       if (activeTitle && (src.title || '').toLowerCase() !== activeTitle.toLowerCase()) return false;
       if (!q) return true;
       return (
-        (n.notes      || '').toLowerCase().includes(q) ||
-        (n.title      || '').toLowerCase().includes(q) ||
-        (n.citation   || '').toLowerCase().includes(q) ||
-        (src.title    || '').toLowerCase().includes(q) ||
-        (src.author   || '').toLowerCase().includes(q) ||
+        (n.notes    || '').toLowerCase().includes(q) ||
+        (n.title    || '').toLowerCase().includes(q) ||
+        (n.citation || '').toLowerCase().includes(q) ||
+        (src.title  || '').toLowerCase().includes(q) ||
+        authors.some(a => a.toLowerCase().includes(q)) ||
         n.tags.some(t => t.toLowerCase().includes(q))
       );
     });
   }
 
-  // ── Render ────────────────────────────────────────────────────────────────
+  // ── Render helpers ────────────────────────────────────────────────────────
   function esc(s) {
     return String(s ?? '')
       .replace(/&/g, '&amp;').replace(/</g, '&lt;')
@@ -409,11 +422,15 @@
     if (n.source) {
       const src = SOURCES[n.source] || {};
       const titleText = src.title || n.source;
+      const authors = src.authors || [];
+      const authorsHtml = authors.map(a =>
+        `<button class="source-btn source-author" data-field="author" data-value="${esc(a)}">${hi(a, q)}</button>`
+      ).join('');
       return `
         <div class="card-source">
           <button class="source-title source-btn" data-field="title" data-value="${esc(titleText)}">${hi(titleText, q)}</button>
-          ${src.author ? `<button class="source-btn source-author" data-field="author" data-value="${esc(src.author)}">${hi(src.author, q)}</button>` : ''}
-          ${n.page ? `<span class="card-page">p. ${esc(n.page)}</span>` : ''}
+          ${authorsHtml}
+          ${n.page ? `<span class="card-page">p. ${esc(String(n.page))}</span>` : ''}
         </div>
         ${src.url ? `<div class="card-url"><a href="${esc(src.url)}" target="_blank" rel="noopener">${esc(src.url)}</a></div>` : ''}
       `;
@@ -423,14 +440,15 @@
       return `
         <div class="card-source">
           <span class="citation-inline">${hi(n.citation, q)}</span>
-          ${n.page ? `<span class="citation-page">p. ${esc(n.page)}</span>` : ''}
+          ${n.page ? `<span class="citation-page">p. ${esc(String(n.page))}</span>` : ''}
         </div>
       `;
     }
-    // Case 3: no source info at all — omit the source row entirely
+    // Case 3: no source info — omit row entirely
     return '';
   }
 
+  // ── Render ────────────────────────────────────────────────────────────────
   function render() {
     const list  = document.getElementById('notes-list');
     const empty = document.getElementById('empty');
@@ -470,7 +488,6 @@
         })
       );
 
-      // Only source-lookup cards have filter buttons
       card.querySelectorAll('.source-btn').forEach(btn =>
         btn.addEventListener('click', () => {
           if (btn.dataset.field === 'author') setAuthorFilter(btn.dataset.value);
