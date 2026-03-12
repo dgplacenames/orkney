@@ -148,7 +148,7 @@
     .source-btn:hover { text-decoration: underline; text-underline-offset: 2px; }
     .source-chip { background: var(--rust); }
     .source-author { font-size: 0.82rem; font-style: italic; color: var(--muted); }
-    .source-author + .source-author::before { content: ', '; font-style: normal; color: var(--muted); margin-left: -0.3rem; }
+    .author-sep { font-size: 0.82rem; color: var(--muted); font-style: normal; }
     .card-page { font-size: 0.82rem; color: var(--muted); }
 
     /* One-off inline citation — not clickable */
@@ -265,7 +265,6 @@
       if (!notesRes.ok) throw new Error(`Could not load notes.yaml (${notesRes.status})`);
 
       const srcList = jsyaml.load(await srcRes.text()) || [];
-      // Normalise authors to arrays on load
       srcList.forEach(s => { s.authors = toAuthors(s.author); });
       SOURCES = Object.fromEntries(srcList.map(s => [s.id, s]));
 
@@ -316,7 +315,6 @@
 
   function setAuthorFilter(value) {
     activeAuthor = activeAuthor === value ? null : value;
-    // Clear title filter if inconsistent with new author
     if (activeAuthor && activeTitle) {
       const match = Object.values(SOURCES).find(s => s.title === activeTitle);
       if (!match || !match.authors.some(a => a.toLowerCase() === activeAuthor.toLowerCase())) {
@@ -423,8 +421,8 @@
       const src = SOURCES[n.source] || {};
       const titleText = src.title || n.source;
       const authors = src.authors || [];
-      const authorsHtml = authors.map(a =>
-        `<button class="source-btn source-author" data-field="author" data-value="${esc(a)}">${hi(a, q)}</button>`
+      const authorsHtml = authors.map((a, i) =>
+        `${i > 0 ? '<span class="author-sep">,</span> ' : ''}<button class="source-btn source-author" data-field="author" data-value="${esc(a)}">${hi(a, q)}</button>`
       ).join('');
       return `
         <div class="card-source">
