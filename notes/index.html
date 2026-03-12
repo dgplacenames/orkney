@@ -209,10 +209,11 @@
       box-shadow: 0 0 0 3px rgba(46, 80, 104, 0.15);
     }
 
+    /* gap:0 — spacing handled explicitly so author sep stays tight */
     .card-source {
       display: flex;
       align-items: baseline;
-      gap: 0.5rem;
+      gap: 0;
       flex-wrap: wrap;
       padding-bottom: 0.6rem;
       border-bottom: 1px solid var(--sand);
@@ -222,6 +223,7 @@
       font-size: 0.85rem;
       font-weight: 600;
       color: var(--sea);
+      margin-right: 0.45rem;
     }
 
     .source-btn {
@@ -248,6 +250,7 @@
       color: var(--muted);
     }
 
+    /* comma sits outside buttons, no gap leaking in */
     .author-sep {
       font-size: 0.82rem;
       color: var(--muted);
@@ -257,6 +260,7 @@
     .card-page {
       font-size: 0.82rem;
       color: var(--muted);
+      margin-left: 0.45rem;
     }
 
     /* One-off inline citation — not clickable */
@@ -271,6 +275,7 @@
       font-size: 0.82rem;
       color: var(--muted);
       white-space: nowrap;
+      margin-left: 0.45rem;
     }
 
     /* Optional note title */
@@ -616,26 +621,28 @@
         const src = SOURCES[n.source] || {};
         const titleText = src.title || n.source;
         const authors = src.authors || [];
-        const authorsHtml = authors.map((a, i) =>
-          `${i > 0 ? '<span class="author-sep">, </span>' : ''}<button class="source-btn source-author" data-field="author" data-value="${esc(a)}">${hi(a, q)}</button>`
-        ).join('');
-        return `
-        <div class="card-source">
-          <button class="source-title source-btn" data-field="title" data-value="${esc(titleText)}">${hi(titleText, q)}</button>
-          ${authorsHtml}
-          ${n.page ? `<span class="card-page">p. ${esc(String(n.page))}</span>` : ''}
-        </div>
-        ${src.url ? `<div class="card-url"><a href="${esc(src.url)}" target="_blank" rel="noopener">${esc(src.url)}</a></div>` : ''}
-      `;
+        // sep + btn concatenated with no whitespace so the comma sits flush
+        const authorsHtml = authors.map((a, i) => {
+          const sep = i > 0 ? '<span class="author-sep">, </span>' : '';
+          const btn = '<button class="source-btn source-author" data-field="author" data-value="' + esc(a) + '">' + hi(a, q) + '</button>';
+          return sep + btn;
+        }).join('');
+        const pageHtml = n.page ? '<span class="card-page">p. ' + esc(String(n.page)) + '</span>' : '';
+        const urlHtml = src.url ? '<div class="card-url"><a href="' + esc(src.url) + '" target="_blank" rel="noopener">' + esc(src.url) + '</a></div>' : '';
+        return '<div class="card-source">'
+          + '<button class="source-title source-btn" data-field="title" data-value="' + esc(titleText) + '">' + hi(titleText, q) + '</button>'
+          + authorsHtml
+          + pageHtml
+          + '</div>'
+          + urlHtml;
       }
       // Case 2: inline one-off citation — plain text, not filterable
       if (n.citation) {
-        return `
-        <div class="card-source">
-          <span class="citation-inline">${hi(n.citation, q)}</span>
-          ${n.page ? `<span class="citation-page">p. ${esc(String(n.page))}</span>` : ''}
-        </div>
-      `;
+        const pageHtml = n.page ? '<span class="citation-page">p. ' + esc(String(n.page)) + '</span>' : '';
+        return '<div class="card-source">'
+          + '<span class="citation-inline">' + hi(n.citation, q) + '</span>'
+          + pageHtml
+          + '</div>';
       }
       // Case 3: no source info — omit row entirely
       return '';
@@ -665,14 +672,14 @@
         ).join('');
 
         card.innerHTML = `
-        ${sourceHtml}
-        ${n.title ? `<h2 class="card-title">${hi(n.title, q)}</h2>` : ''}
-        <div class="card-notes">${hi(n.notes || '', q).split('\n\n').map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('')}</div>
-        <div class="card-footer">
-          <div class="card-tags">${tagsHtml}</div>
-          <a class="card-anchor" href="#${esc(n.id)}" title="Direct link">#${esc(n.id)}</a>
-        </div>
-      `;
+          ${sourceHtml}
+          ${n.title ? `<h2 class="card-title">${hi(n.title, q)}</h2>` : ''}
+          <div class="card-notes">${hi(n.notes || '', q).split('\n\n').map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('')}</div>
+          <div class="card-footer">
+            <div class="card-tags">${tagsHtml}</div>
+            <a class="card-anchor" href="#${esc(n.id)}" title="Direct link">#${esc(n.id)}</a>
+          </div>
+        `;
 
         card.querySelectorAll('.card-tag').forEach(btn =>
           btn.addEventListener('click', () => {
