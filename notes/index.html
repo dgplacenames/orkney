@@ -209,24 +209,23 @@
       box-shadow: 0 0 0 3px rgba(46, 80, 104, 0.15);
     }
 
-    /* gap:0 — spacing handled explicitly so author sep stays tight */
+    /* block so children flow as inline text — reliable comma+space handling */
     .card-source {
-      display: flex;
-      align-items: baseline;
-      gap: 0;
-      flex-wrap: wrap;
+      display: block;
       padding-bottom: 0.6rem;
       border-bottom: 1px solid var(--sand);
+      line-height: 1.6;
     }
 
     .source-title {
+      display: inline;
       font-size: 0.85rem;
       font-weight: 600;
       color: var(--sea);
-      margin-right: 0.45rem;
     }
 
     .source-btn {
+      display: inline;
       background: none;
       border: none;
       padding: 0;
@@ -245,26 +244,28 @@
     }
 
     .source-author {
+      display: inline;
       font-size: 0.82rem;
       font-style: italic;
       color: var(--muted);
     }
 
-    /* comma sits outside buttons, no gap leaking in */
     .author-sep {
+      display: inline;
       font-size: 0.82rem;
       color: var(--muted);
       font-style: normal;
     }
 
     .card-page {
+      display: inline;
       font-size: 0.82rem;
       color: var(--muted);
-      margin-left: 0.45rem;
     }
 
     /* One-off inline citation — not clickable */
     .citation-inline {
+      display: inline;
       font-size: 0.83rem;
       font-style: italic;
       color: var(--muted);
@@ -272,10 +273,9 @@
     }
 
     .citation-page {
+      display: inline;
       font-size: 0.82rem;
       color: var(--muted);
-      white-space: nowrap;
-      margin-left: 0.45rem;
     }
 
     /* Optional note title */
@@ -621,13 +621,13 @@
         const src = SOURCES[n.source] || {};
         const titleText = src.title || n.source;
         const authors = src.authors || [];
-        // sep + btn concatenated with no whitespace so the comma sits flush
+        // All inline elements, comma+space as plain text between buttons
         const authorsHtml = authors.map((a, i) => {
-          const sep = i > 0 ? '<span class="author-sep">, </span>' : '';
+          const sep = i > 0 ? '<span class="author-sep">, </span>' : ' ';
           const btn = '<button class="source-btn source-author" data-field="author" data-value="' + esc(a) + '">' + hi(a, q) + '</button>';
           return sep + btn;
         }).join('');
-        const pageHtml = n.page ? '<span class="card-page">p. ' + esc(String(n.page)) + '</span>' : '';
+        const pageHtml = n.page ? ' <span class="card-page">p.\u00a0' + esc(String(n.page)) + '</span>' : '';
         const urlHtml = src.url ? '<div class="card-url"><a href="' + esc(src.url) + '" target="_blank" rel="noopener">' + esc(src.url) + '</a></div>' : '';
         return '<div class="card-source">'
           + '<button class="source-title source-btn" data-field="title" data-value="' + esc(titleText) + '">' + hi(titleText, q) + '</button>'
@@ -638,7 +638,7 @@
       }
       // Case 2: inline one-off citation — plain text, not filterable
       if (n.citation) {
-        const pageHtml = n.page ? '<span class="citation-page">p. ' + esc(String(n.page)) + '</span>' : '';
+        const pageHtml = n.page ? ' <span class="citation-page">p.\u00a0' + esc(String(n.page)) + '</span>' : '';
         return '<div class="card-source">'
           + '<span class="citation-inline">' + hi(n.citation, q) + '</span>'
           + pageHtml
